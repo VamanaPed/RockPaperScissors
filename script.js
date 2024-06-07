@@ -5,6 +5,9 @@ let lastChoice = "rock";
 let playerScore = 0;
 let computerScore = 0;
 
+let PlayerChoice = "";
+let ComputerChoice = "";
+
 function getComputerChoice()
 {
     let choice = "";
@@ -79,6 +82,106 @@ function getHumanChoice(text)
     return input;
 }
 
+let selectFX = new Audio('Audio/select.wav');
+let select2FX = new Audio('Audio/select2.wav');
+let winFX = new Audio('Audio/win.wav');
+let loseFX = new Audio('Audio/lose.wav');
+let restartFX = new Audio('Audio/restart.wav');
+
+function getPlayerChoiceUI(input)
+{
+    selectFX.play();
+
+    input = input.toUpperCase();
+
+    switch (input)
+    {
+        case "ROCK":
+        case "R":
+                input = "rock";
+            break;
+
+        case "PAPER":
+        case "P":
+                input = "paper";
+            break;
+
+        case "SCISSORS":
+        case "S":
+                input = "scissors";
+            break;
+
+        default:
+            input = "";
+            break;
+    }
+
+    console.log("player choice " + input);
+    playRoundUI(input, getComputerChoice());
+}
+
+const resultText = document.querySelector("#resultText");
+resultText.textContent = "Pick your choice!";
+
+const playerScoreText = document.querySelector("#playerScore");
+const computerScoreText = document.querySelector("#computerScore");
+
+const restartButton = document.getElementById("restart");
+restartButton.style.display = "none";
+restartButton.addEventListener("click", () => 
+{
+    restartFX.play();
+
+    updateScores();
+
+    resultText.textContent = "Pick your choice!";
+
+    restartButton.style.display = "none";
+});
+
+function playRoundUI(playerChoice, computerChoice)
+{
+    const message = playRound(playerChoice, computerChoice);
+
+    updateScores();
+
+    resultText.textContent = message;
+
+    if(playerScore != 0 || computerScore != 0)
+    {
+        restartButton.style.display = "none";
+    }
+    if(playerScore >= 5 || computerScore >= 5)
+    {
+        restartButton.style.display = "block";
+    }
+
+    if(playerScore >= 5)
+    {
+        winFX.play();
+
+        resultText.textContent = `Player Wins! Your Score: ${playerScore}`;
+
+        playerScore = 0;
+        computerScore = 0;
+    }
+    if(computerScore >= 5)
+    {
+        loseFX.play();
+
+        resultText.textContent = "Computer Wins! You Lose!";
+        
+        playerScore = 0;
+        computerScore = 0;
+    }
+}
+
+function updateScores()
+{
+    playerScoreText.textContent = `Player Score: ${playerScore}`;
+    computerScoreText.textContent = `Computer Score: ${computerScore}`; 
+}
+
 function playRound(humanChoice, computerChoice)
 {
     let winner = "tie";
@@ -142,6 +245,7 @@ function playRound(humanChoice, computerChoice)
     {
         case "player":
                 playerScore ++;
+                select2FX.play();
             break;
         case "computer":
                 computerScore ++;
@@ -149,14 +253,14 @@ function playRound(humanChoice, computerChoice)
     }
 
     console.log("Player Score: " + playerScore + " Computer Score: " + computerScore);
-    alert(message);
+    return message;
 }
 
 function playGame()
 {
     for (i = 0; i < 5; i++)
     {
-        playRound(getHumanChoice(), getComputerChoice());
+        alert(playRound(getHumanChoice(), getComputerChoice()));
     }
 
     if(playerScore > computerScore)
@@ -176,4 +280,9 @@ function playGame()
     }
 }
 
-playGame();
+const rockBtn = document.querySelector("#rock");
+const paperBtn = document.querySelector("#paper");
+const scissorsBtn = document.querySelector("#scissors");
+
+
+//playGame();
